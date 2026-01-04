@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { Task } from './definitions';
 
 export const downloadExcelTemplate = () => {
-  const headers = ["WO_WOID", "WO_WLID", "WO_XQSL", "WO_JHKGRQ", "WO_JHWGRQ", "WO_BMID"];
+  const headers = ["生产任务单号", "物料编码", "需求数量", "计划开工日期", "计划完工日期", "完工部门ID"];
   const worksheet = XLSX.utils.aoa_to_sheet([headers]);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Tasks');
@@ -22,12 +22,12 @@ export const importFromExcel = (file: File, callback: (data: Partial<Task>[]) =>
     });
     
     const formattedData = json.map((row: any) => ({
-      WO_WOID: row.WO_WOID?.toString() || '',
-      WO_WLID: row.WO_WLID?.toString() || '',
-      WO_XQSL: row.WO_XQSL?.toString() || '',
-      WO_JHKGRQ: row.WO_JHKGRQ instanceof Date ? row.WO_JHKGRQ.toISOString().split('T')[0] : (row.WO_JHKGRQ?.toString() || ''),
-      WO_JHWGRQ: row.WO_JHWGRQ instanceof Date ? row.WO_JHWGRQ.toISOString().split('T')[0] : (row.WO_JHWGRQ?.toString() || ''),
-      WO_BMID: row.WO_BMID?.toString() || '',
+      WO_WOID: row['生产任务单号']?.toString() || '',
+      WO_WLID: row['物料编码']?.toString() || '',
+      WO_XQSL: row['需求数量']?.toString() || '',
+      WO_JHKGRQ: row['计划开工日期'] instanceof Date ? row['计划开工日期'].toISOString().split('T')[0] : (row['计划开工日期']?.toString() || ''),
+      WO_JHWGRQ: row['计划完工日期'] instanceof Date ? row['计划完工日期'].toISOString().split('T')[0] : (row['计划完工日期']?.toString() || ''),
+      WO_BMID: row['完工部门ID']?.toString() || '',
     }));
 
     callback(formattedData);

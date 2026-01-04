@@ -14,6 +14,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -77,8 +78,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={() => router.push("/dashboard")}
-                isActive={pathname === "/dashboard"}
+                onClick={() => router.push("/zh/dashboard")}
+                isActive={pathname === "/zh/dashboard"}
                 tooltip="Data Entry"
               >
                 <Home />
@@ -87,8 +88,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={() => router.push("/dashboard/history")}
-                isActive={pathname === "/dashboard/history"}
+                onClick={() => router.push("/zh/dashboard/history")}
+                isActive={pathname === "/zh/dashboard/history"}
                 tooltip="History"
               >
                 <History />
@@ -129,7 +130,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </DropdownMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <div className="flex-1">
+            <h1 className="text-lg font-semibold">工单管理系统</h1>
+          </div>
+        </header>
+        <div className="flex-1 overflow-auto p-4">
+          {children}
+        </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

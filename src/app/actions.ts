@@ -1,10 +1,8 @@
 "use server";
 
 import { type Task } from "@/lib/definitions";
-import { generateZLH } from "@/app/actions/wo-actions";
-import { formatInTimeZone } from 'date-fns-tz';
-import { validateWOWLID } from '@/lib/oracle-config';
-import oracledb from 'oracledb';
+
+const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
 
 type SubmissionResult = {
   success: boolean;
@@ -47,26 +45,8 @@ export async function submitTasks(tasks: Task[]): Promise<SubmissionResult> {
     if (duplicates.length > 1) {
       errors.push({
         rowIndex: i,
-        message: `工单号 ${task.WO_WOID} 在当前批次中重复`,
+        message: `任务单号 ${task.WO_WOID} 在当前批次中重复`,
         field: 'WO_WOID'
-      });
-    }
-    
-    // Validate WO_WLID exists in Oracle
-    try {
-      const validation = await validateWOWLID(task.WO_WLID);
-      if (!validation.exists) {
-        errors.push({
-          rowIndex: i,
-          message: `物料编码 '${task.WO_WLID}' 在ERP系统中不存在`,
-          field: 'WO_WLID'
-        });
-      }
-    } catch (error) {
-      errors.push({
-        rowIndex: i,
-        message: `验证物料编码时出错`,
-        field: 'WO_WLID'
       });
     }
   }
@@ -75,70 +55,47 @@ export async function submitTasks(tasks: Task[]): Promise<SubmissionResult> {
     return { success: false, errors };
   }
   
-  // Insert into Oracle database
-  let connection;
+  // Prepare tasks with default values for Oracle
+  const preparedTasks = tasks.map(task => ({
+    ...task,
+    WO_GCID: task.WO_GCID || '01',    // Default factory number
+    WO_ZT: task.WO_ZT || 'I',         // Default status
+    WO_LX: task.WO_LX || 'EXT',       // Default type
+    WO_BZ: task.WO_BZ || '无',      
+  }));
+  
+  // Submit tasks to Oracle via proxy service
   try {
-    connection = await oracledb.getConnection({
-      user: process.env.ORACLE_USER!,
-      password: process.env.ORACLE_PASSWORD!,
-      connectString: `${process.env.ORACLE_HOST}:${process.env.ORACLE_PORT}/${process.env.ORACLE_SERVICE_NAME}`
+    const response = await fetch(`${PROXY_URL}/api/submit-tasks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tasks: preparedTasks })
     });
     
-    // Insert each task
-    for (const task of tasks) {
-      const zlh = await generateZLH();
-      const currentTime = formatInTimeZone(new Date(), 'Asia/Shanghai', 'yyyy-MM-dd HH:mm:ss');
-      
-      await connection.execute(
-        `INSERT INTO WO (
-          WO_WOID, WO_GCID, WO_WLID, WO_XQSL, 
-          WO_JHKGRQ, WO_JHWGRQ, WO_BMID, WO_ZLH,
-          WO_LX, WO_ZT, WO_DZSC, WO_BZ,
-          WO_WHRID, WO_WHR, WO_WHSJ
-        ) VALUES (
-          :woid, '01', :wlid, :xqsl,
-          TO_DATE(:jhkgrq, 'YYYY-MM-DD'), 
-          TO_DATE(:jhwgrq, 'YYYY-MM-DD'),
-          :bmid, :zlh, 'MPS', 'P', 'N', :bz,
-          'ADMIN', '系统管理员', TO_DATE(:whsj, 'YYYY-MM-DD HH24:MI:SS')
-        )`,
-        {
-          woid: task.WO_WOID,
-          wlid: task.WO_WLID,
-          xqsl: parseFloat(task.WO_XQSL),
-          jhkgrq: task.WO_JHKGRQ,
-          jhwgrq: task.WO_JHWGRQ,
-          bmid: task.WO_BMID,
-          zlh: zlh,
-          bz: task.WO_BZ || '',
-          whsj: currentTime
-        },
-        { autoCommit: false }
-      );
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { 
+        success: false, 
+        errors: [{
+          rowIndex: 0,
+          message: errorData.error || '提交到数据库失败'
+        }]
+      };
     }
     
-    await connection.commit();
-    return { success: true };
+    const result = await response.json();
+    return { success: result.success };
     
   } catch (error: any) {
-    if (connection) {
-      await connection.rollback();
-    }
-    console.error('Database insertion failed:', error);
+    console.error('Submit tasks error:', error);
     return { 
       success: false, 
-      errors: [{ 
-        rowIndex: 0, 
-        message: `数据库错误: ${error.message}` 
-      }] 
+      errors: [{
+        rowIndex: 0,
+        message: error.message || '提交失败'
+      }]
     };
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error('Error closing connection:', err);
-      }
-    }
   }
 }

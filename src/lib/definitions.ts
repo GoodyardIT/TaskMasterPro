@@ -25,13 +25,13 @@ export type SubmittedTask = Task & {
 // Update departments with correct values
 export const departments = [
   { value: "GQ", label: "曲阜谷雅" },
-  { value: "LC", label: "质检部门" },
-  { value: "GQ2", label: "国内仓储" }, // Using GQ2 to differentiate since both use GQ
+  { value: "QC", label: "质检部门" },
+  { value: "LC", label: "国内仓储" }, // Using GQ2 to differentiate since both use GQ
 ];
 
 // If the business requirement is that both really use "GQ", then:
 export const departmentsActual = [
   { value: "GQ", label: "曲阜谷雅", displayOrder: 1 },
-  { value: "LC", label: "质检部门", displayOrder: 2 },
-  { value: "GQ", label: "国内仓储", displayOrder: 3 },
+  { value: "QC", label: "质检部门", displayOrder: 2 },
+  { value: "LC", label: "国内仓储", displayOrder: 3 },
 ];

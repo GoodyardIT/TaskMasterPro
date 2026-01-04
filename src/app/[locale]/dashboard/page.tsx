@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import { type Task } from "@/lib/definitions";
 import { downloadExcelTemplate, importFromExcel } from "@/lib/excel-utils";
 import { submitTasks } from "@/app/actions";
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase-config';
 import { generateWOID, generateBatchWOIDs } from "@/app/actions/wo-actions";
 import { CalendarIcon, Download, FileUp, Loader2, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
@@ -138,6 +140,32 @@ export default function DataEntryPage() {
       const result = await submitTasks(data.tasks);
 
       if (result.success) {
+        // Save to Firestore for history
+        try {
+          for (const task of data.tasks) {
+            await addDoc(collection(db, 'production_tasks'), {
+              WO_WOID: task.WO_WOID,
+              WO_WLID: task.WO_WLID,
+              WO_XQSL: task.WO_XQSL,
+              WO_JHKGRQ: task.WO_JHKGRQ,
+              WO_JHWGRQ: task.WO_JHWGRQ,
+              WO_BMID: task.WO_BMID,
+              WO_BZ: task.WO_BZ || '',
+              WO_GCID: '01',
+              WO_ZLH: '',
+              WO_LX: 'EXT',
+              WO_ZT: 'F',
+              WO_DZSC: 'N',
+              WO_WHRID: 'ADMIN',
+              WO_WHR: '系统管理员',
+              WO_WHSJ: new Date(),
+              submittedAt: new Date()
+            });
+          }
+        } catch (firestoreError) {
+          console.error('Firestore save error:', firestoreError);
+        }
+        
         toast({
           title: "提交成功",
           description: "所有任务已提交",
@@ -371,9 +399,9 @@ export default function DataEntryPage() {
                                   <SelectValue placeholder="选择部门" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="GQ">曲阜固雅</SelectItem>
-                                  <SelectItem value="LC">质检部门</SelectItem>
-                                  <SelectItem value="GQ">国内仓储</SelectItem>
+                                  <SelectItem value="GQ">曲阜谷雅</SelectItem>
+                                  <SelectItem value="QC">质检部门</SelectItem>
+                                  <SelectItem value="LC">国内仓储</SelectItem>
                                 </SelectContent>
                               </Select>
                               {fieldState.error && <p className="text-xs text-destructive mt-1">{fieldState.error.message}</p>}

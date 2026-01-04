@@ -1,64 +1,66 @@
-import oracledb from 'oracledb';
+// Oracle proxy service configuration
+const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
 
-// Oracle connection configuration
-const dbConfig = {
-  user: process.env.ORACLE_USER,
-  password: process.env.ORACLE_PASSWORD,
-  connectString: `${process.env.ORACLE_HOST}:${process.env.ORACLE_PORT}/${process.env.ORACLE_SERVICE_NAME}`
-};
-
-// Test database connection
+// Test proxy connection
 export async function testOracleConnection(): Promise<{ success: boolean; error?: string }> {
-  let connection;
   try {
-    connection = await oracledb.getConnection(dbConfig);
-    await connection.execute('SELECT 1 FROM DUAL');
-    return { success: true };
+    const response = await fetch(`${PROXY_URL}/health`);
+    
+    if (!response.ok) {
+      return { 
+        success: false, 
+        error: 'Proxy service is not responding' 
+      };
+    }
+    
+    const data = await response.json();
+    return { success: data.status === 'ok' };
   } catch (error: any) {
-    console.error('Oracle connection test failed:', error);
+    console.error('Proxy connection test failed:', error);
     return { 
       success: false, 
-      error: error.message || 'Database connection failed' 
+      error: error.message || 'Proxy connection failed' 
     };
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error('Error closing connection:', err);
-      }
-    }
   }
 }
 
-// Validate WO_WLID exists in WLXX table
+// Validate WO_WLID exists in WLXX table via proxy
 export async function validateWOWLID(woWlid: string): Promise<{ exists: boolean; error?: string }> {
-  let connection;
   try {
-    connection = await oracledb.getConnection(dbConfig);
+    console.log('=== Starting validation for:', woWlid);
     
-    const result = await connection.execute(
-      `SELECT COUNT(*) as count FROM WLXX WHERE WLXX_WLID = :woWlid`,
-      [woWlid],
-      { outFormat: oracledb.OUT_FORMAT_OBJECT }
-    );
+    const trimmedWlid = woWlid.trim();
+    console.log('Trimmed WLID:', trimmedWlid, 'Length:', trimmedWlid.length);
     
-    const count = (result.rows as any[])[0]?.COUNT || 0;
-    return { exists: count > 0 };
+    const response = await fetch(`${PROXY_URL}/api/validate-material`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ wlid: trimmedWlid })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Validation API error:', errorData);
+      return { 
+        exists: false, 
+        error: errorData.error || 'Validation request failed' 
+      };
+    }
+    
+    const data = await response.json();
+    console.log('Validation result:', data);
+    
+    return { exists: data.exists };
     
   } catch (error: any) {
-    console.error('Oracle validation failed:', error);
+    console.error('=== Oracle validation error details ===');
+    console.error('Error message:', error.message);
+    console.error('Full error:', error);
     return { 
       exists: false, 
       error: error.message || 'Database validation failed' 
     };
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error('Error closing connection:', err);
-      }
-    }
   }
 }
