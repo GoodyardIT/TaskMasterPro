@@ -59,7 +59,7 @@ export async function submitTasks(tasks: Task[]): Promise<SubmissionResult> {
   const preparedTasks = tasks.map(task => ({
     ...task,
     WO_GCID: '01',
-    WO_ZT: 'I',
+    WO_ZT: 'F',
     WO_LX: 'EXT',
     WO_BZ: task.WO_BZ || '',
     WO_ZLH: '',

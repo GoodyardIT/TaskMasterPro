@@ -32,7 +32,7 @@ export async function validateWOWLID(woWlid: string): Promise<{ exists: boolean;
     const trimmedWlid = woWlid.trim();
     console.log('Trimmed WLID:', trimmedWlid, 'Length:', trimmedWlid.length);
     
-    const response = await fetch(`${PROXY_URL}/api/validate-material`, {
+    const response = await fetch(`${PROXY_URL}/validate-wlid`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

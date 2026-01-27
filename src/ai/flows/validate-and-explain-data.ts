@@ -11,6 +11,8 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
+
 const ValidationInputSchema = z.object({
   wo_woid: z.string().describe('Work Order ID'),
   wo_wlid: z.string().describe('Work List ID'),
@@ -77,12 +79,12 @@ const checkOracleWLID = ai.defineTool(
   },
   async input => {
     try {
-      const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/validate-wlid`, {
+      const response = await fetch(`${PROXY_URL}/validate-wlid`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ woWlid: input.wo_wlid }),
+        body: JSON.stringify({ wlid: input.wo_wlid }),
       });
 
       const data = await response.json();
