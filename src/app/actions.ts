@@ -58,15 +58,19 @@ export async function submitTasks(tasks: Task[]): Promise<SubmissionResult> {
   // Prepare tasks with default values for Oracle
   const preparedTasks = tasks.map(task => ({
     ...task,
-    WO_GCID: task.WO_GCID || '01',    // Default factory number
-    WO_ZT: task.WO_ZT || 'I',         // Default status
-    WO_LX: task.WO_LX || 'EXT',       // Default type
-    WO_BZ: task.WO_BZ || '无',      
+    WO_GCID: '01',
+    WO_ZT: 'I',
+    WO_LX: 'EXT',
+    WO_BZ: task.WO_BZ || '',
+    WO_ZLH: '',
+    WO_DZSC: 'N',
+    WO_WHRID: 'ADMIN',
+    WO_WHR: '系统管理员'
   }));
   
   // Submit tasks to Oracle via proxy service
   try {
-    const response = await fetch(`${PROXY_URL}/api/submit-tasks`, {
+    const response = await fetch(`${PROXY_URL}/insert-wo`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

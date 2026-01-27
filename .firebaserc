@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "studio-9024067253-54f69"
-  }
+    "default": "oracle-proxy-service"
+  },
+  "targets": {},
+  "etags": {}
 }
