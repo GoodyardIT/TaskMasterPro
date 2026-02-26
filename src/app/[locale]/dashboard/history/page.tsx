@@ -45,6 +45,7 @@ export default function HistoryPage() {
 
   const TaskStatusBadge = ({ status }: { status: string }) => {
     switch (status) {
+      case 'I':
       case 'P':
       case 'F':
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Planned</Badge>;

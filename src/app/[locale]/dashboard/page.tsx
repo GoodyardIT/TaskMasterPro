@@ -154,7 +154,7 @@ export default function DataEntryPage() {
               WO_GCID: '01',
               WO_ZLH: '',
               WO_LX: 'EXT',
-              WO_ZT: 'F',
+              WO_ZT: 'I',
               WO_DZSC: 'N',
               WO_WHRID: 'ADMIN',
               WO_WHR: '系统管理员',
