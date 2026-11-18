@@ -16,7 +16,7 @@ env:
   # Oracle Database Configuration
   # 如果您的数据库 IP 变了，请修改下面的 value 字段
   - variable: ORACLE_HOST
-    value: "118.190.204.137"
+    value: "47.104.4.93"
   - variable: ORACLE_PORT
     value: "1521"
   - variable: ORACLE_SERVICE_NAME
