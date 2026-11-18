@@ -10,8 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-
-const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
+import { PROXY_URL } from '@/lib/constants';
 
 const ValidationInputSchema = z.object({
   wo_woid: z.string().describe('Work Order ID'),
@@ -40,7 +39,7 @@ const validateDataPrompt = ai.definePrompt({
   name: 'validateDataPrompt',
   input: {schema: ValidationInputSchema},
   output: {schema: ValidationOutputSchema},
-  prompt: `You are a data validation expert for TaskMaster Pro, an application for managing production task orders.  Your job is to validate the incoming data from a form and explain any validation issues.
+  prompt: `You are a data validation expert for TaskMaster Pro, an application for managing production task orders. Your job is to validate the incoming data from a form and explain any validation issues.
 
 Here's the data you need to validate:
 
@@ -54,10 +53,10 @@ All WO_WOIDs in form: {{{all_woids}}}
 
 Here are the validation rules:
 
-1.  All fields (WO_WOID, WO_WLID, WO_XQSL, WO_JHKGRQ, WO_JHWGRQ, WO_BMID) are required.
-2.  WO_XQSL must be a number greater than 0.
-3.  WO_WOID must be unique within the current form (check against {{{all_woids}}}).
-4.  WO_WLID must exist in the Oracle ERP database (WLXX table, WLXX_WLID column).
+1. All fields (WO_WOID, WO_WLID, WO_XQSL, WO_JHKGRQ, WO_JHWGRQ, WO_BMID) are required.
+2. WO_XQSL must be a number greater than 0.
+3. WO_WOID must be unique within the current form (check against {{{all_woids}}}).
+4. WO_WLID must exist in the Oracle ERP database (WLXX table, WLXX_WLID column).
 
 Respond with a JSON object (following the ValidationOutputSchema) indicating whether the data is valid and providing a detailed explanation of any validation errors. Make sure to set isValid to false if ANY of the above checks fail.
 

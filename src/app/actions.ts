@@ -1,8 +1,7 @@
 "use server";
 
 import { type Task } from "@/lib/definitions";
-
-const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
+import { PROXY_URL } from "@/lib/constants";
 
 type SubmissionResult = {
   success: boolean;

@@ -1,5 +1,4 @@
-// Oracle proxy service configuration
-const PROXY_URL = 'https://oracle-proxy-314890691419.us-central1.run.app';
+import { PROXY_URL } from './constants';
 
 // Test proxy connection
 export async function testOracleConnection(): Promise<{ success: boolean; error?: string }> {
