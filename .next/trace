@@ -51,3 +51,4 @@
 [{"name":"next-dev","duration":3864912274,"timestamp":23929592105,"id":1,"tags":{},"startTime":1794985825033,"traceId":"fea000ede0b1336d"}]
 [{"name":"hot-reloader","duration":256,"timestamp":27805741727,"id":3,"tags":{"version":"15.3.8"},"startTime":1794989701182,"traceId":"f41df8eee5377524"},{"name":"compile-path","duration":3020581,"timestamp":27806486523,"id":4,"tags":{"trigger":"middleware"},"startTime":1794989701927,"traceId":"f41df8eee5377524"}]
 [{"name":"next-dev","duration":556616486,"timestamp":27796806133,"id":1,"tags":{},"startTime":1794989692247,"traceId":"f41df8eee5377524"}]
+[{"name":"hot-reloader","duration":185,"timestamp":28363335478,"id":3,"tags":{"version":"15.3.8"},"startTime":1794990258776,"traceId":"e668339aad2e871a"},{"name":"compile-path","duration":2113789,"timestamp":28363771380,"id":4,"tags":{"trigger":"middleware"},"startTime":1794990259212,"traceId":"e668339aad2e871a"}]
