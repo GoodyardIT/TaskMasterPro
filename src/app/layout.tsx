@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "../components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'TaskMaster Pro',
-  description: 'Manage production task orders with ease.',
+  title: 'Goodyard TaskMaster Pro',
+  description: '高效管理您的生产工单。',
 };
 
 export default async function RootLayout({
@@ -13,7 +13,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

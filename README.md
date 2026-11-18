@@ -1,63 +1,51 @@
-# TaskMaster Pro - Production Work Order Management System
+# Goodyard TaskMaster Pro - 生产工单管理系统
 
-TaskMaster Pro is a modern, full-stack web application designed to streamline the creation and management of production work orders. It integrates with an Oracle ERP system for data validation and submission, leverages Firebase for real-time data and user authentication, and uses Generative AI for intelligent data validation assistance.
+Goodyard TaskMaster Pro 是一款现代化的全栈 Web 应用程序，专为生产工单的创建与管理而设计。它集成了 Oracle ERP 系统进行数据验证与提交，利用 Firebase 实现实时数据存储和身份验证，并使用 Generative AI 提供智能数据验证辅助。
 
-![TaskMaster Pro Screenshot](https://storage.googleapis.com/studiopaper-dev/llm-studio-template-tasks/taskmaster-pro-screenshot.png)
+## 核心功能
 
-## Key Features
+- **安全身份验证**：采用 Firebase Authentication 实现安全的登录系统。
+- **直观数据录入**：用户可以通过简洁的表格界面逐行手动添加生产任务。
+- **AI 驱动的验证**：集成 Genkit AI 流，在提交前实时检查数据的完整性和唯一性。
+- **Excel 导入/导出**：支持下载模板并批量导入任务，自动生成工单 ID。
+- **Oracle ERP 集成**：通过安全云代理与 Oracle 数据库通信，验证物料编码（WO_WLID）并提交最终工单。
+- **实时提交历史**：专用历史页面使用 Firestore 实时显示所有已提交任务的状态和详情。
+- **多语言支持**：界面支持中文和英文切换。
 
-- **Secure User Authentication**: Employs Firebase Authentication for a secure login system.
-- **Intuitive Data Entry**: Users can manually add production tasks row by row with a clean, table-based interface.
-- **AI-Powered Validation**: A Genkit AI flow validates user input in real-time, checking for data integrity and uniqueness before submission.
-- **Excel Import/Export**: Includes functionality to download a template and batch-import tasks from an Excel file, with automatic Work Order ID generation.
-- **Oracle ERP Integration**: Communicates with an Oracle database via a secure cloud proxy to validate material codes (`WO_WLID`) and submit finalized work orders.
-- **Real-time Submission History**: A dedicated history page uses Firestore to display all submitted tasks in real-time, showing their status and details.
-- **Internationalization (i18n)**: The user interface is available in both English and Chinese, with a simple language switcher.
-- **Modern UI/UX**: Built with ShadCN UI and Tailwind CSS for a responsive, professional, and consistent user experience.
+## 技术栈
 
-## Technology Stack
+- **框架**: Next.js (App Router)
+- **语言**: TypeScript
+- **样式**: Tailwind CSS
+- **UI 组件**: ShadCN UI
+- **AI 框架**: Google Genkit
+- **实时数据库**: Google Firestore
+- **身份验证**: Firebase Authentication
+- **部署**: Firebase App Hosting
 
-- **Framework**: Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: ShadCN UI
-- **Generative AI**: Google Genkit
-- **Database (Real-time)**: Google Firestore
-- **Authentication**: Firebase Authentication
-- **ERP Integration**: Custom Oracle DB Proxy (Node.js/Express on Cloud Functions)
-- **Deployment**: Firebase App Hosting
+## 快速开始
 
-## Project Structure
+### 本地运行
 
-- `src/app/[locale]/`: Contains the main application pages, components, and layouts using the Next.js App Router.
-  - `dashboard/`: The main application area after login, including data entry and history pages.
-  - `lib/`: Holds utility functions, type definitions, and client-side configurations for Firebase.
-  - `components/ui/`: Houses all the reusable ShadCN UI components.
-- `src/ai/flows/`: Implements the Genkit AI logic for data validation.
-- `src/app/actions.ts`: Contains Next.js Server Actions for handling form submissions and interacting with the backend.
-- `cloud-functions/oracle-proxy/`: A Node.js Express server that acts as a secure proxy to communicate with the Oracle database.
-- `messages/`: Contains JSON files for English (`en.json`) and Chinese (`zh.json`) translations.
+1. **安装依赖**:
+   ```bash
+   npm install
+   ```
 
-## Getting Started
+2. **配置环境变量**:
+   创建 `.env.local` 文件，参考项目根目录的配置填入 Firebase 和 Oracle 代理的凭据。
 
-To run the application locally:
+3. **启动开发服务器**:
+   ```bash
+   npm run dev
+   ```
 
-1.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+4. **启动 Genkit 开发工具**:
+   ```bash
+   npm run genkit:watch
+   ```
 
-2.  **Set up environment variables**:
-    Create a `.env.local` file in the root directory and populate it with the necessary credentials for Firebase and Oracle, following the structure in `.env`.
+访问 `http://localhost:9002` 即可预览应用。
 
-3.  **Run the development server**:
-    ```bash
-    npm run dev
-    ```
-
-4.  **Start the Genkit development service (in a separate terminal)**:
-    ```bash
-    npm run genkit:watch
-    ```
-
-The application will be available at `http://localhost:9002`.
+---
+© 2025 Goodyard IT. 版权所有。
